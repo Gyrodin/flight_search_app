@@ -14,6 +14,14 @@ interface AirportDao {
     )
     fun getList(): Flow<List<Airport>>
 
+/*    @Query("SELECT * from airport WHERE iata_code= :searchTextState OR name LIKE '%' " +
+            "|| :searchTextState || '%' ")*/
+
+    @Query("SELECT * FROM airport\n" +
+            "WHERE LOWER(iata_code) LIKE '%' || LOWER(:searchTextState) || '%'\n" +
+            "   OR LOWER(name) LIKE '%' || LOWER(:searchTextState) || '%'")
+    fun getAirportsSatisfied(searchTextState: String): Flow<List<Airport>>
+
     @Query("SELECT * FROM airport " +
             "WHERE id = :id LIMIT 1")
 

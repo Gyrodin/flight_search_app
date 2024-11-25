@@ -63,6 +63,7 @@ android {
         implementation("androidx.core:core-ktx:1.10.1")
         implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
         implementation("androidx.navigation:navigation-compose:${rootProject.extra["nav_version"]}")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0")
 
 
         implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")

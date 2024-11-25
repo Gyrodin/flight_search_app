@@ -43,12 +43,12 @@ import com.example.flightsearch.ui.navigation.FlightSearchNavHost
 import kotlinx.coroutines.delay
 
 @Composable
-fun FlightSearchApp(navController: NavHostController = rememberNavController())
-{
-    val flightSearchViewModel: FlightSearchViewModel = viewModel(factory = FlightSearchViewModel.factory)
+fun FlightSearchApp(navController: NavHostController = rememberNavController()) {
+    val flightSearchViewModel: FlightSearchViewModel =
+        viewModel(factory = FlightSearchViewModel.factory)
     val searchWidgetState by flightSearchViewModel.searchWidgetState
-    val searchTextState by flightSearchViewModel.searchTextState
-    //val searchTextState = flightSearchViewModel.searchTextState.value
+    val searchTextState by flightSearchViewModel.searchTextState.collectAsState()
+    val filteredAirports by flightSearchViewModel.filteredAirports.collectAsState()
 
     Scaffold(
         containerColor = Color.Blue,
@@ -68,7 +68,6 @@ fun FlightSearchApp(navController: NavHostController = rememberNavController())
                     flightSearchViewModel.updateSearchWidgetState(SearchWidgetState.CLOSED)
                 },
                 onSearchClicked = {
-                    //flightSearchViewModel.getList()
                     Log.d("SEARCH2", searchTextState)
                 }
             ) {
@@ -80,9 +79,12 @@ fun FlightSearchApp(navController: NavHostController = rememberNavController())
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it)
-
         ) {
-            FlightSearchNavHost(navController = navController)
+            FlightSearchNavHost(
+                navController = navController,
+                filteredAirports = filteredAirports
+            )
+
         }
     }
 }
@@ -96,18 +98,19 @@ fun FlightSearchTopAppBar(
     onSearchClicked: (String) -> Unit,
     onSearchTriggered: () -> Unit
 ) {
-    when(searchWidgetState) {
+    when (searchWidgetState) {
         SearchWidgetState.CLOSED -> {
             DefaultAppBar(
-                onSearchClicked =  onSearchTriggered
+                onSearchClicked = onSearchTriggered
             )
         }
+
         SearchWidgetState.OPENED -> {
             SearchAppBar(
                 text = searchTextState,
                 onTextChange = onTextChange,
                 onCloseClicked = onCloseClicked,
-                onSearchClicked =  onSearchClicked
+                onSearchClicked = onSearchClicked
             )
         }
     }
@@ -120,8 +123,10 @@ fun DefaultAppBar(
 ) {
     TopAppBar(
         title = {
-            Text(text = stringResource(id = R.string.app_name)
-            )},
+            Text(
+                text = stringResource(id = R.string.app_name)
+            )
+        },
         actions = {
             IconButton(onClick = onSearchClicked) {
                 Icon(

@@ -40,7 +40,9 @@ fun FlightsFromScreen(
     viewModel: FlightSearchViewModel = viewModel(factory = FlightSearchViewModel.factory),
     navController: NavController
     ) {
-    val airports = viewModel.getList().collectAsState(initial = emptyList())
+    //val airports = viewModel.getList().collectAsState(initial = emptyList())
+    val searchTextState = viewModel.searchTextState.collectAsState()
+    val airports = viewModel.getAirportsSatisfied(searchTextState = searchTextState.value).collectAsState(initial = emptyList())
     val name = navController.currentBackStackEntry?.arguments?.getString(FlightsFromDestination.argName)
     val iataCode = navController.currentBackStackEntry?.arguments?.getString(FlightsFromDestination.argIataCode)
 
