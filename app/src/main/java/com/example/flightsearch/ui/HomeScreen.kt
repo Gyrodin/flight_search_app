@@ -37,32 +37,18 @@ object HomeDestination : NavigationDestination {
 @Composable
 fun HomeScreen(
     navigateToFlightsFrom: (String, String) -> Unit,  // Принимаем ID аэропорта
+    filteredAirports: List<Airport>,
     flightSearchViewModel: FlightSearchViewModel = viewModel(factory = FlightSearchViewModel.factory),
     contentPadding: PaddingValues = PaddingValues(0.dp),
     modifier: Modifier = Modifier
 ) {
     // Получаем список аэропортов и состояние поиска
-    val airports by flightSearchViewModel.getList().collectAsState(emptyList())
-    //val searchTextState by flightSearchViewModel.searchTextState
-    val searchTextState = flightSearchViewModel.searchTextState.value
-
-/*    val filteredAirports = remember(searchTextState, airports) {
-        airports.filter {
-            it.name.contains(searchTextState, ignoreCase = true) ||
-                    it.iataCode.contains(searchTextState, ignoreCase = true)
-        }
-    }*/
-
-    // Лог результатов фильтрации
-/*    LaunchedEffect(filteredAirports) {
-        println("Filtered Airports: ${filteredAirports.map { it.name }}")
-        println("SearchTextState: $searchTextState")
-    }*/
+    val searchTextState by flightSearchViewModel.searchTextState.collectAsState()
+    //val filteredAirports by flightSearchViewModel.filteredAirports.collectAsState()
 
     // Отображаем список аэропортов
     AirportList(
-        //airports = filteredAirports,
-        airports = airports,
+        airports = filteredAirports,
         onAirportClick = { name, iataCode ->
             navigateToFlightsFrom(name, iataCode)  // Передаем ID выбранного аэропорта
         },
@@ -78,25 +64,14 @@ private fun AirportList(
     searchTextState: String,
     modifier: Modifier = Modifier
 ) {
-    // Фильтруем аэропорты по тексту поиска
-    val filteredAirports = airports.filter {
-        it.name.contains(searchTextState, ignoreCase = true) ||
-                it.iataCode.contains(searchTextState, ignoreCase = true)
-    }
     Log.d("SEARCH3", searchTextState)
-
-/*    LaunchedEffect(filteredAirports) {
-        println("Filtered Airports: ${filteredAirports.map { it.name }}")
-        println("SearchTextState: $searchTextState")
-    }*/
-
+    Log.d("FilteredAirports", "Filtered list: ${airports.map { it.name }}")
     LazyColumn(
         modifier = modifier.background(Color.LightGray),
         contentPadding = contentPadding()
     ) {
         items(
-            items = filteredAirports
-            //items = airports
+            items = airports
         ) { airport ->
             AirportItem(
                 modifier = Modifier.clickable { onAirportClick(airport.name, airport.iataCode) },

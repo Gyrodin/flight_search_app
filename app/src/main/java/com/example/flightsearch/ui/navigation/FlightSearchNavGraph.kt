@@ -7,6 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.flightsearch.data.Airport
 import com.example.flightsearch.ui.FlightsFromDestination
 import com.example.flightsearch.ui.FlightsFromScreen
 import com.example.flightsearch.ui.HomeDestination
@@ -15,8 +16,9 @@ import com.example.flightsearch.ui.HomeScreen
 @Composable
 fun FlightSearchNavHost(
     navController: NavHostController,
+    filteredAirports: List<Airport>,
     modifier: Modifier = Modifier,
-) {
+    ) {
     NavHost(
         navController = navController,
         startDestination = HomeDestination.route,
@@ -27,6 +29,8 @@ fun FlightSearchNavHost(
                 navigateToFlightsFrom = { name, iataCode ->
                     navController.navigate("${FlightsFromDestination.route}/$name/$iataCode")
                 },
+                filteredAirports = filteredAirports,
+
             )
         }
         composable(

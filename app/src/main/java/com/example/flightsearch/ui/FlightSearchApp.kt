@@ -47,8 +47,8 @@ fun FlightSearchApp(navController: NavHostController = rememberNavController())
 {
     val flightSearchViewModel: FlightSearchViewModel = viewModel(factory = FlightSearchViewModel.factory)
     val searchWidgetState by flightSearchViewModel.searchWidgetState
-    val searchTextState by flightSearchViewModel.searchTextState
-    //val searchTextState = flightSearchViewModel.searchTextState.value
+    val searchTextState by flightSearchViewModel.searchTextState.collectAsState()
+    val filteredAirports by flightSearchViewModel.filteredAirports.collectAsState()
 
     Scaffold(
         containerColor = Color.Blue,
@@ -68,7 +68,6 @@ fun FlightSearchApp(navController: NavHostController = rememberNavController())
                     flightSearchViewModel.updateSearchWidgetState(SearchWidgetState.CLOSED)
                 },
                 onSearchClicked = {
-                    //flightSearchViewModel.getList()
                     Log.d("SEARCH2", searchTextState)
                 }
             ) {
@@ -80,9 +79,12 @@ fun FlightSearchApp(navController: NavHostController = rememberNavController())
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it)
-
         ) {
-            FlightSearchNavHost(navController = navController)
+            FlightSearchNavHost(
+                navController = navController,
+                filteredAirports = filteredAirports
+            )
+
         }
     }
 }
